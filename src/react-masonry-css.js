@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const defaultProps = {
   breakpointCols: undefined, // optional, number or object { default: number, [key: number]: number }
@@ -16,18 +16,18 @@ const defaultProps = {
   // Deprecated props
   // The column property is deprecated.
   // It is an alias of the `columnAttrs` property
-  column: undefined
-};
+  column: undefined,
+}
 
-const DEFAULT_COLUMNS = 2;
+const DEFAULT_COLUMNS = 2
 
 class Masonry extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     // Correct scope for when methods are accessed externally
-    this.reCalculateColumnCount = this.reCalculateColumnCount.bind(this);
-    this.reCalculateColumnCountDebounce = this.reCalculateColumnCountDebounce.bind(this);
+    this.reCalculateColumnCount = this.reCalculateColumnCount.bind(this)
+    this.reCalculateColumnCountDebounce = this.reCalculateColumnCountDebounce.bind(this)
 
     // default state
     let columnCount
@@ -38,109 +38,111 @@ class Masonry extends React.Component {
     }
 
     this.state = {
-      columnCount
-    };
+      columnCount,
+    }
   }
 
   componentDidMount() {
-    this.reCalculateColumnCount();
+    this.reCalculateColumnCount()
 
     // window may not be available in some environments
-    if(window) {
-      window.addEventListener('resize', this.reCalculateColumnCountDebounce);
+    if (window) {
+      window.addEventListener('resize', this.reCalculateColumnCountDebounce)
     }
   }
 
   componentDidUpdate() {
-    this.reCalculateColumnCount();
+    this.reCalculateColumnCount()
   }
 
   componentWillUnmount() {
-    if(window) {
-      window.removeEventListener('resize', this.reCalculateColumnCountDebounce);
+    if (window) {
+      window.removeEventListener('resize', this.reCalculateColumnCountDebounce)
     }
   }
 
   reCalculateColumnCountDebounce() {
-    if(!window || !window.requestAnimationFrame) {  // IE10+
-      this.reCalculateColumnCount();
-      return;
+    if (!window || !window.requestAnimationFrame) {
+      // IE10+
+      this.reCalculateColumnCount()
+      return
     }
 
-    if(window.cancelAnimationFrame) { // IE10+
-      window.cancelAnimationFrame(this._lastRecalculateAnimationFrame);
+    if (window.cancelAnimationFrame) {
+      // IE10+
+      window.cancelAnimationFrame(this._lastRecalculateAnimationFrame)
     }
 
     this._lastRecalculateAnimationFrame = window.requestAnimationFrame(() => {
-      this.reCalculateColumnCount();
-    });
+      this.reCalculateColumnCount()
+    })
   }
 
   reCalculateColumnCount() {
-    const windowWidth = window && window.innerWidth || Infinity;
-    let breakpointColsObject = this.props.breakpointCols;
+    const windowWidth = (window && window.innerWidth) || Infinity
+    let breakpointColsObject = this.props.breakpointCols
 
     // Allow passing a single number to `breakpointCols` instead of an object
-    if(typeof breakpointColsObject !== 'object') {
+    if (typeof breakpointColsObject !== 'object') {
       breakpointColsObject = {
-        default: parseInt(breakpointColsObject) || DEFAULT_COLUMNS
+        default: parseInt(breakpointColsObject) || DEFAULT_COLUMNS,
       }
     }
 
-    let matchedBreakpoint = Infinity;
-    let columns = breakpointColsObject.default || DEFAULT_COLUMNS;
+    let matchedBreakpoint = Infinity
+    let columns = breakpointColsObject.default || DEFAULT_COLUMNS
 
-    for(let breakpoint in breakpointColsObject) {
-      const optBreakpoint = parseInt(breakpoint);
-      const isCurrentBreakpoint = optBreakpoint > 0 && windowWidth <= optBreakpoint;
+    for (let breakpoint in breakpointColsObject) {
+      const optBreakpoint = parseInt(breakpoint)
+      const isCurrentBreakpoint = optBreakpoint > 0 && windowWidth <= optBreakpoint
 
-      if(isCurrentBreakpoint && optBreakpoint < matchedBreakpoint) {
-        matchedBreakpoint = optBreakpoint;
-        columns = breakpointColsObject[breakpoint];
+      if (isCurrentBreakpoint && optBreakpoint < matchedBreakpoint) {
+        matchedBreakpoint = optBreakpoint
+        columns = breakpointColsObject[breakpoint]
       }
     }
 
-    columns = Math.max(1, parseInt(columns) || 1);
+    columns = Math.max(1, parseInt(columns) || 1)
 
-    if(this.state.columnCount !== columns) {
+    if (this.state.columnCount !== columns) {
       this.setState({
-        columnCount: columns
-      });
+        columnCount: columns,
+      })
     }
   }
 
   itemsInColumns() {
-    const currentColumnCount = this.state.columnCount;
-    const itemsInColumns = new Array(currentColumnCount);
+    const currentColumnCount = this.state.columnCount
+    const itemsInColumns = new Array(currentColumnCount)
 
     // Force children to be handled as an array
-    const items = [].concat(this.props.children || []);
+    const items = [].concat(this.props.children || [])
 
     for (let i = 0; i < items.length; i++) {
-      const columnIndex = i % currentColumnCount;
+      const columnIndex = i % currentColumnCount
 
-      if(!itemsInColumns[columnIndex]) {
-        itemsInColumns[columnIndex] = [];
+      if (!itemsInColumns[columnIndex]) {
+        itemsInColumns[columnIndex] = []
       }
 
-      itemsInColumns[columnIndex].push(items[i]);
+      itemsInColumns[columnIndex].push(items[i])
     }
 
-    return itemsInColumns;
+    return itemsInColumns
   }
 
   renderColumns() {
-    const { column, columnAttrs = {}, columnClassName } = this.props;
-    const childrenInColumns = this.itemsInColumns();
-    const columnWidth = `${100 / childrenInColumns.length}%`;
-    let className = columnClassName;
+    const { column, columnAttrs = {}, columnClassName } = this.props
+    const childrenInColumns = this.itemsInColumns()
+    const columnWidth = `${100 / childrenInColumns.length}%`
+    let className = columnClassName
 
-    if(typeof className !== 'string') {
-      this.logDeprecated('The property "columnClassName" requires a string');
+    if (typeof className !== 'string') {
+      this.logDeprecated('The property "columnClassName" requires a string')
 
       // This is a deprecated default and will be removed soon.
-      if(typeof className === 'undefined') {
-        className = 'my-masonry-grid_column';
+      if (typeof className === 'undefined') {
+        className = 'my-masonry-grid_column'
       }
     }
 
@@ -151,24 +153,25 @@ class Masonry extends React.Component {
       ...columnAttrs,
       style: {
         ...columnAttrs.style,
-        width: columnWidth
+        width: columnWidth,
       },
-      className
-    };
+      className,
+    }
 
     return childrenInColumns.map((items, i) => {
-      return <div
-        {...columnAttributes}
-
-        key={i}
-      >
-        {items}
-      </div>;
-    });
+      return (
+        <div {...columnAttributes} key={i}>
+          {items.map((item, itemIndex) => ({
+            ...item,
+            props: { ...item.props, ['data-index']: itemIndex },
+          }))}
+        </div>
+      )
+    })
   }
 
   logDeprecated(message) {
-    console.error('[Masonry]', message);
+    console.error('[Masonry]', message)
   }
 
   render() {
@@ -184,30 +187,27 @@ class Masonry extends React.Component {
       className,
 
       ...rest
-    } = this.props;
+    } = this.props
 
-    let classNameOutput = className;
+    let classNameOutput = className
 
-    if(typeof className !== 'string') {
-      this.logDeprecated('The property "className" requires a string');
+    if (typeof className !== 'string') {
+      this.logDeprecated('The property "className" requires a string')
 
       // This is a deprecated default and will be removed soon.
-      if(typeof className === 'undefined') {
-        classNameOutput = 'my-masonry-grid';
+      if (typeof className === 'undefined') {
+        classNameOutput = 'my-masonry-grid'
       }
     }
 
     return (
-      <div
-        {...rest}
-        className={classNameOutput}
-      >
+      <div {...rest} className={classNameOutput}>
         {this.renderColumns()}
       </div>
-    );
+    )
   }
 }
 
-Masonry.defaultProps = defaultProps;
+Masonry.defaultProps = defaultProps
 
-export default Masonry;
+export default Masonry

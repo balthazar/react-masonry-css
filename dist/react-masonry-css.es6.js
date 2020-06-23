@@ -160,11 +160,10 @@ class Masonry extends React.Component {
     return childrenInColumns.map((items, i) => {
       return React.createElement(
         'div',
-        _extends({}, columnAttributes, {
-
-          key: i
-        }),
-        items
+        _extends({}, columnAttributes, { key: i }),
+        items.map((item, itemIndex) => _extends({}, item, {
+          props: _extends({}, item.props, { ['data-index']: itemIndex })
+        }))
       );
     });
   }
@@ -202,9 +201,7 @@ class Masonry extends React.Component {
 
     return React.createElement(
       'div',
-      _extends({}, rest, {
-        className: classNameOutput
-      }),
+      _extends({}, rest, { className: classNameOutput }),
       this.renderColumns()
     );
   }
