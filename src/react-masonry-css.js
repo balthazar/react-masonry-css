@@ -13,11 +13,6 @@ const defaultProps = {
   // ...any other attribute, will be added to the container
   columnAttrs: undefined, // object, added to the columns
 
-  // Deprecated props
-  // The column property is deprecated.
-  // It is an alias of the `columnAttrs` property
-  column: undefined,
-
   fallBackWidth: 2000,
 }
 
@@ -41,6 +36,13 @@ class Masonry extends React.Component {
 
     this.state = {
       columnCount,
+    }
+  }
+
+  componentWillMount() {
+    if (typeof window === 'undefined') {
+      // recalculate with fallback on server
+      this.reCalculateColumnCount()
     }
   }
 
@@ -81,7 +83,8 @@ class Masonry extends React.Component {
   }
 
   reCalculateColumnCount() {
-    const windowWidth = (window && window.innerWidth) || this.props.fallBackWidth
+    const windowWidth =
+      (typeof window !== 'undefined' && window.innerWidth) || this.props.fallBackWidth
     let breakpointColsObject = this.props.breakpointCols
 
     // Allow passing a single number to `breakpointCols` instead of an object
@@ -134,30 +137,17 @@ class Masonry extends React.Component {
   }
 
   renderColumns() {
-    const { column, columnAttrs = {}, columnClassName } = this.props
+    const { columnAttrs = {}, columnClassName } = this.props
     const childrenInColumns = this.itemsInColumns()
     const columnWidth = `${100 / childrenInColumns.length}%`
-    let className = columnClassName
-
-    if (typeof className !== 'string') {
-      this.logDeprecated('The property "columnClassName" requires a string')
-
-      // This is a deprecated default and will be removed soon.
-      if (typeof className === 'undefined') {
-        className = 'my-masonry-grid_column'
-      }
-    }
 
     const columnAttributes = {
-      // NOTE: the column property is undocumented and considered deprecated.
-      // It is an alias of the `columnAttrs` property
-      ...column,
       ...columnAttrs,
       style: {
         ...columnAttrs.style,
         width: columnWidth,
       },
-      className,
+      className: columnClassName,
     }
 
     return childrenInColumns.map((items, i) => {
@@ -172,10 +162,6 @@ class Masonry extends React.Component {
     })
   }
 
-  logDeprecated(message) {
-    console.error('[Masonry]', message)
-  }
-
   render() {
     const {
       // ignored
@@ -183,7 +169,6 @@ class Masonry extends React.Component {
       breakpointCols,
       columnClassName,
       columnAttrs,
-      column,
 
       // used
       className,
@@ -191,19 +176,8 @@ class Masonry extends React.Component {
       ...rest
     } = this.props
 
-    let classNameOutput = className
-
-    if (typeof className !== 'string') {
-      this.logDeprecated('The property "className" requires a string')
-
-      // This is a deprecated default and will be removed soon.
-      if (typeof className === 'undefined') {
-        classNameOutput = 'my-masonry-grid'
-      }
-    }
-
     return (
-      <div {...rest} className={classNameOutput}>
+      <div {...rest} className={className}>
         {this.renderColumns()}
       </div>
     )
