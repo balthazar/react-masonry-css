@@ -42,7 +42,9 @@ var defaultProps = {
   // Deprecated props
   // The column property is deprecated.
   // It is an alias of the `columnAttrs` property
-  column: undefined
+  column: undefined,
+
+  fallBackWidth: 2000
 };
 
 var DEFAULT_COLUMNS = 2;
@@ -118,7 +120,7 @@ var Masonry = function (_React$Component) {
   }, {
     key: 'reCalculateColumnCount',
     value: function reCalculateColumnCount() {
-      var windowWidth = window && window.innerWidth || Infinity;
+      var windowWidth = window && window.innerWidth || this.props.fallBackWidth;
       var breakpointColsObject = this.props.breakpointCols;
 
       // Allow passing a single number to `breakpointCols` instead of an object
