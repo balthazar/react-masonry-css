@@ -1,6 +1,6 @@
 {
   "name": "react-masonry-css-index",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "React Masonry component powered by CSS, dependancy free",
   "main": "dist/react-masonry-css.es5.js",
   "scripts": {

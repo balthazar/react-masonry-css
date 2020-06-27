@@ -13,7 +13,7 @@ const defaultProps = {
   // ...any other attribute, will be added to the container
   columnAttrs: undefined, // object, added to the columns
 
-  fallBackWidth: 2000,
+  fallbackWidth: 2000,
 }
 
 const DEFAULT_COLUMNS = 2
@@ -84,7 +84,7 @@ class Masonry extends React.Component {
 
   reCalculateColumnCount() {
     const windowWidth =
-      (typeof window !== 'undefined' && window.innerWidth) || this.props.fallBackWidth
+      (typeof window !== 'undefined' && window.innerWidth) || this.props.fallbackWidth
     let breakpointColsObject = this.props.breakpointCols
 
     // Allow passing a single number to `breakpointCols` instead of an object
@@ -169,6 +169,7 @@ class Masonry extends React.Component {
       breakpointCols,
       columnClassName,
       columnAttrs,
+      fallbackWidth,
 
       // used
       className,
